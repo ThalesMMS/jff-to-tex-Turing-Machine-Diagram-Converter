@@ -4,9 +4,10 @@
 \usepackage{tikz}
 \usepackage{amssymb}
 
-\usetikzlibrary{automata, positioning, arrows}
-
+% Definição do símbolo branco
 \newcommand{\blank}{\square}
+
+\usetikzlibrary{automata, positioning, arrows, shapes}
 
 \begin{document}
 
@@ -45,25 +46,34 @@
   \path (qfb) edge[loop above] node {b / b D} (qfb)
               edge node[above left] {$\blank$ / $\blank$ E} (qvol);
 
-  % 2. Retorno (LISTA VERTICAL EXPLÍCITA)
   % Usamos align=center e \\ para quebrar linha
+  % 2. Retorno
   \path (qvol) edge[loop left] node[align=center] {a / a E \\ b / b E \\ X / X E \\ Y / Y E} (qvol)
                edge node[left] {$\langle$ / $\langle$ D} (qa);
 
   % 3. Pareamento A
-  % Ajustei qA para o mesmo formato vertical para manter consistência
   \path (qa) edge[loop left] node[align=center] {X / X D \\ Y / Y D} (qa)
              edge[right] node[above] {a / X D} (qb)
              edge node[left] {b / b D} (qsb);
 
-  % 4. Pareamento B (LISTA VERTICAL EXPLÍCITA)
+  % 4. Pareamento B
   \path (qb) edge[loop right] node[align=center] {a / a D \\ X / X D \\ Y / Y D} (qb)
              edge[above left] node[below] {b / Y E} (qvol)
              edge[below] node[right] {$\blank$ / $\blank$ E} (acc);
 
   % 5. Sobra B
   \path (qsb) edge[loop left] node {Y / Y D} (qsb)
-              edge node[below] {b / b D} (acc);
+              edge node[below] {b / b D} (acc)
+              edge[bend left=45] node[above] {$\blank$ / $\blank$ E} (acc);
+
+  % --- LEGENDA ---
+  \node[draw=black!50, dashed, rounded corners, inner sep=10pt, align=left, anchor=north] 
+  at (1.25, -12.5) {
+    \small
+    $\Sigma = \{a, b\}$\\
+    $\Gamma = \{a, b, X, Y, \blank, \langle\}$\\
+    Qualquer transição não desenhada para um par\\ (Estado, Símbolo) implica parada e rejeição.
+  };
 
 \end{tikzpicture}
 \end{center}
