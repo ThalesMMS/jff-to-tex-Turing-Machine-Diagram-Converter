@@ -1,8 +1,43 @@
-# Turing Machine Diagrams in LaTeX
+# JFLAP to LaTeX Converter & Turing Machine Diagrams
 
-A collection of Turing Machine state diagrams created with LaTeX and TikZ. These diagrams are useful for computer science courses, particularly for Theory of Computation and Automata Theory.
+This project provides a Python tool to automatically convert JFLAP (`.jff`) Turing Machine files into high-quality LaTeX (`.tex`) diagrams using TikZ. It also includes a collection of manually crafted Turing Machine examples.
 
-## Contents
+## JFLAP to LaTeX Converter
+
+Easily turn your JFLAP designs into publication-ready LaTeX diagrams.
+
+### Example
+
+**Input (JFLAP):**
+![JFLAP Input](screenshots/test_input.png)
+
+**Output (LaTeX/TikZ):**
+![LaTeX Output](screenshots/test_output.png)
+
+### Usage
+
+1.  **Prerequisite:** Ensure you have Python installed.
+2.  **Run the script:**
+    ```bash
+    python3 converter.py <path_to_input.jff>
+    ```
+    Example:
+    ```bash
+    python3 converter.py src/test.jff
+    ```
+    This generates a `.tex` file in the same directory as the input (e.g., `src/test.tex`).
+
+### Converter Features
+- **Automatic Scaling:** Converts pixel coordinates to LaTeX cm coordinates.
+- **Layout Preservation:** Flips logic to match JFLAP's visual layout.
+- **Smart Edges:** Automatically bends bidirectional edges to prevent overlap.
+- **Math Mode:** Correctly formats symbols like `\square` (blank).
+
+---
+
+## Included Examples
+
+A collection of handwritten examples is also available in `src/`.
 
 | File | Description |
 |------|-------------|
@@ -10,43 +45,33 @@ A collection of Turing Machine state diagrams created with LaTeX and TikZ. These
 | [`tm-equal-ab-count.tex`](src/tm-equal-ab-count.tex) | Decider TM for L = { w ∈ {a,b}* \| nₐ(w) = n_b(w) } |
 | [`tm-unequal-ab.tex`](src/tm-unequal-ab.tex) | Decider TM for L = { aᵐbⁿ \| m ≠ n } |
 
-## Previews
+### Previews
 
-### Example template
+#### Example template
 ![tm-example-template](screenshots/tm-example-template.png)
 
-### Equal a/b count
+#### Equal a/b count
 ![tm-equal-ab-count](screenshots/tm-equal-ab-count.png)
 
-### Unequal a's and b's
+#### Unequal a's and b's
 ![tm-unequal-ab](screenshots/tm-unequal-ab.png)
 
 ## Requirements
 
-- LaTeX distribution (TeX Live, MiKTeX, or MacTeX)
-- Required packages:
-  - `tikz` with libraries: `automata`, `positioning`, `arrows`, `shapes`, `calc`
+- **Python 3.x** (for the converter)
+- **LaTeX Distribution** (TeX Live, MiKTeX, or MacTeX)
+- **LaTeX Packages**:
+  - `tikz` (libraries: `automata`, `positioning`, `arrows`, `shapes`, `calc`)
   - `amssymb`
-  - `geometry` (for landscape layouts)
+  - `geometry`
 
 ## Compilation
 
-Compile any `.tex` file using:
+Compile any `.tex` file (generated or example) using:
 
 ```bash
-pdflatex tm-unequal-ab.tex
+pdflatex src/test.tex
 ```
-
-Or use your preferred LaTeX editor (TeXShop, Overleaf, VS Code with LaTeX Workshop, etc.).
-
-## Diagram Conventions
-
-- **States**: Circles with state names (e.g., q₀, q₁)
-- **Accept states**: Double circles with green fill
-- **Transitions**: Labeled as `read / write direction` where direction is R (right) or L (left)
-- **Blank symbol**: □ (square)
-- **Start marker**: ⟨ (left angle bracket)
-- **Markers**: X and Y used to mark processed symbols
 
 ## License
 
