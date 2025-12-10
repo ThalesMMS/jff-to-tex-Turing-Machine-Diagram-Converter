@@ -1,0 +1,139 @@
+\documentclass{article}
+\usepackage[utf8]{inputenc}
+\usepackage[portuguese]{babel}
+\usepackage{tikz}
+\usepackage{amssymb}
+% 1. Margem mínima para aproveitar o papel A4 deitado
+\usepackage[a4paper, landscape, margin=0.5cm]{geometry} 
+
+% Definições
+\newcommand{\blank}{\square}
+\newcommand{\lmarker}{\langle}
+
+\usetikzlibrary{automata, positioning, arrows, shapes, calc}
+
+\begin{document}
+
+\begin{center}
+\textbf{\Large MT Decisora para $L = \{ a^n c^n \} \cup \{ b^m d^m \} \cup \{ a^n b^m c^n d^m \}$}
+\vspace{0.5cm}
+
+\begin{tikzpicture}[
+    ->,                 
+    >=stealth,          
+    shorten >=1pt,      
+    auto,               
+    node distance=4.5cm, % 2. ESPAÇAMENTO GRANDE para evitar sobreposição
+    thick,              
+    % Configuração dos labels nas arestas (font small para caber, align center para quebras de linha)
+    every node/.style={align=center, font=\small}, 
+    % Configuração das bolinhas (estados)
+    state/.style={circle, draw, minimum size=1.4cm, thick, fill=white, font=\normalsize\bfseries}, 
+    accept/.style={double, circle, draw, minimum size=1.4cm, thick, fill=green!10, font=\normalsize\bfseries},
+    initial text=       
+  ]
+
+  % --- POSICIONAMENTO DOS ESTADOS ---
+
+  % Início
+  \node[state, initial] (q0) {$q_{0}$};
+  \node[accept, left=2.5cm of q0] (q3) {$q_{3}$};
+
+  % Ramo Superior (Começa com 'a')
+  \node[state, above right=2.5cm and 4cm of q0] (q1) {$q_{1}$};
+  \node[state, right=5cm of q1] (q5) {$q_{5}$};
+  
+  % Ramo do Meio (Detecta 'b' após 'a') - Posicionado mais distante horizontalmente
+  \node[state, right=5cm of q0] (q13) {$q_{13}$}; 
+  \node[state, right=5cm of q13] (q12) {$q_{12}$};
+
+  % Ramo Inferior (Começa com 'b')
+  \node[state, below right=2.5cm and 4cm of q0] (q4) {$q_{4}$};
+
+  % Convergência
+  \node[state, right=5cm of q4] (q6) {$q_{6}$};
+  
+  % O "Rewind" (q2) - Centralizado abaixo do meio, mas com espaço para o loop
+  \node[state, below=3.5cm of q13] (q2) {$q_{2}$};
+
+  % Verificação Final - Espalhados horizontalmente abaixo para não encavalar
+  \node[state, below left=2.5cm and 1cm of q2] (q7) {$q_{7}$};
+  \node[state, right=3.5cm of q7] (q8) {$q_{8}$}; % Ao lado do q7
+  \node[state, right=3.5cm of q8] (q9) {$q_{9}$};
+  \node[state, right=3.5cm of q9] (q11) {$q_{11}$};
+  \node[accept, right=2.5cm of q11] (q10) {$q_{10}$};
+
+  % --- TRANSIÇÕES ---
+
+  % 1. Partida
+  \path (q0) 
+    edge node[pos=0.6] {a / X D} (q1)
+    edge node[pos=0.6, below left] {b / Y D} (q4)
+    edge node {$\blank$ / $\blank$ E} (q3)
+    edge[loop above, min distance=1.5cm] node {X/X D \\ Y/Y D} (q0);
+
+  % 2. Ramo Superior
+  \path (q1)
+    edge[loop above, min distance=1.5cm] node {a/a D \\ X/X D \\ Y/Y D} (q1)
+    edge node {c / X D} (q5)
+    edge node[right, near start] {b / Y D} (q13);
+
+  % 3. Ramo Inferior
+  \path (q4)
+    edge[loop below, min distance=1.5cm] node {b/b D \\ X/X D \\ Y/Y D} (q4)
+    edge node {d / Y D} (q6);
+
+  % 4. Ramo Meio
+  \path (q13)
+    edge[loop above, min distance=1.5cm] node {b/b D \\ X/X D \\ Y/Y D} (q13)
+    edge node {c / X D} (q12);
+
+  % 5. Loops de 'c' e saídas
+  \path (q5)
+    edge[loop above] node {c/c D \\ X/X D \\ Y/Y D} (q5)
+    edge node[right] {d / Y D} (q6)
+    edge[bend left=25] node[right, pos=0.2] {$\blank$ / $\blank$ E} (q2);
+
+  \path (q12)
+    edge[loop below] node {c/c D \\ X/X D \\ Y/Y D} (q12)
+    edge node[right] {d / Y D} (q6);
+
+  % 6. Fim do Ciclo ('d')
+  \path (q6)
+    edge[loop right] node {d/d D} (q6)
+    edge[bend left=45] node[below] {$\blank$ / $\blank$ E} (q2);
+
+  % 7. REWIND (q2) - O loop foi movido para a direita para limpar a área central
+  \path (q2)
+    % Loop posicionado à direita-baixo (in=-45, out=45) para não bater em q0 ou q7
+    edge[loop left, min distance=3cm, in=135, out=225] 
+    node {a/a E, \ b/b E \\ c/c E, \ d/d E \\ X/X E, \ Y/Y E} (q2)
+    
+    edge node[above, near end] {$\blank$ / $\blank$ D} (q0)
+    edge node[left] {Y / Y E} (q7)
+    edge node[right] {X / X E} (q8);
+
+  % 8. Cadeia de Verificação (q7 -> q10)
+  \path (q7) 
+    edge[loop left] node {Y/Y E} (q7)
+    edge node[above] {X / X E} (q8)
+    edge[bend right=25] node[below] {Y / Y E} (q9);
+
+  \path (q8)
+    edge[loop above] node {X/X E} (q8)
+    edge node[above] {Y / Y E} (q9)
+    edge[bend left=25] node[above] {X / X E} (q11);
+
+  \path (q9)
+    edge[loop above] node {Y/Y E} (q9)
+    edge node[above] {X / X E} (q11)
+    edge[bend right=35] node[below] {$\blank$ / $\blank$ D} (q10);
+
+  \path (q11)
+    edge[loop above] node {X/X E} (q11)
+    edge node[above] {$\blank$ / $\blank$ D} (q10);
+
+\end{tikzpicture}
+\end{center}
+
+\end{document}
