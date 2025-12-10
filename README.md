@@ -6,9 +6,9 @@ A collection of Turing Machine state diagrams created with LaTeX and TikZ. These
 
 | File | Description |
 |------|-------------|
-| [`tm-unequal-ab.tex`](src/tm-unequal-ab.tex) | Decider TM for L = { aᵐbⁿ \| m ≠ n } |
-| [`tm-equal-ab-count.tex`](src/tm-equal-ab-count.tex) | Decider TM for L = { w ∈ {a,b}* \| nₐ(w) = n_b(w) } |
 | [`tm-example-template.tex`](src/tm-example-template.tex) | Basic TM template with tape visualization |
+| [`tm-equal-ab-count.tex`](src/tm-equal-ab-count.tex) | Decider TM for L = { w ∈ {a,b}* \| nₐ(w) = n_b(w) } |
+| [`tm-unequal-ab.tex`](src/tm-unequal-ab.tex) | Decider TM for L = { aᵐbⁿ \| m ≠ n } |
 
 ## Previews
 
